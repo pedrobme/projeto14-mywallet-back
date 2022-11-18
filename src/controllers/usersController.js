@@ -1,5 +1,5 @@
 import { v4 as uuid } from "uuid";
-import { usersCollection } from "../app.js";
+import { sessionsCollection, usersCollection } from "../app.js";
 import { signinSchema, signupSchema } from "../assets/joiSchemas.js";
 import bcrypt from "bcrypt";
 
@@ -27,6 +27,16 @@ export const trySignin = async (req, res) => {
       const sessionToken = uuid();
 
       res.status(200).send({ authToken: sessionToken });
+
+      await sessionsCollection.insertOne({
+        userId: userDetails._id,
+        authToken: sessionToken,
+      });
+
+      console.log(`${userDetails.username} session:`, {
+        userId: userDetails._id.toString(),
+        authToken: sessionToken,
+      });
     }
   } catch (error) {
     res.status(400).send(error);

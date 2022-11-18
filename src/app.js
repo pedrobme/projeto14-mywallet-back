@@ -1,7 +1,8 @@
-import express from "express";
+import express, { application } from "express";
 import cors from "cors";
 import { MongoClient } from "mongodb";
-import { trySignin, trySignup } from "./controllers/userController.js";
+import { trySignin, trySignup } from "./controllers/usersController.js";
+import { getWalletData, insertEntry } from "./controllers/walletController.js";
 
 const app = express();
 app.use(express.json());
@@ -20,9 +21,16 @@ try {
 
 export let usersCollection = db.collection("users");
 export let sessionsCollection = db.collection("sessions");
+export let walletCollection = db.collection("wallet");
 
-app.post("/", (req, res) => trySignin(req, res));
+app.post("/", trySignin);
 
-app.post("/signup", (req, res) => trySignup(req, res));
+app.post("/signup", trySignup);
+
+app.get("/mywallet", getWalletData);
+
+app.post("/addgain", insertEntry);
+
+app.post("/addloss", insertEntry);
 
 app.listen(5000, console.log("App running at port 5000"));
