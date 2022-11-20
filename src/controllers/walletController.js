@@ -4,7 +4,11 @@ import { entriesSchema } from "../assets/joiSchemas.js";
 
 export const insertEntry = async (req, res) => {
   const entryObject = req.body;
-  const authToken = req.headers.authorization.split(" ")[1];
+  let authToken = req.headers.authorization;
+
+  if (authToken) {
+    authToken = authToken.split(" ")[1];
+  }
 
   try {
     const userSession = await sessionsCollection.findOne({

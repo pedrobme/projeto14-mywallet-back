@@ -29,8 +29,8 @@ app.post("/signup", trySignup);
 
 app.get("/mywallet", getWalletData);
 
-app.post("/addgain", insertEntry);
+app.post("/entry/gain", insertEntry);
 
-app.post("/addloss", insertEntry);
+app.post("/entry/loss", insertEntry);
 
 app.listen(5000, console.log("App running at port 5000"));
