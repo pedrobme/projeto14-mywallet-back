@@ -45,7 +45,11 @@ export const insertEntry = async (req, res) => {
 };
 
 export const getWalletData = async (req, res) => {
-  const authToken = req.headers.authorization.split(" ")[1];
+  let authToken = req.headers.authorization;
+
+  if (authToken) {
+    authToken = authToken.split(" ")[1];
+  }
 
   try {
     const userSession = await sessionsCollection.findOne({
