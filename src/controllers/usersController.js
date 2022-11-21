@@ -22,23 +22,43 @@ export const trySignin = async (req, res) => {
     });
 
     if (!userDetails) {
-      res.status(422).send({ message: "Email is not found" });
+      res.status(422).send(["Email is not registered"]);
     } else {
-      const sessionToken = uuid();
+      bcrypt.compare(
+        req.body.password,
+        userDetails.password,
+        async (bcrypterr, bcryptres) => {
+          if (bcrypterr) {
+            res.sendStatus(500);
+            return;
+          }
 
-      res
-        .status(200)
-        .send({ authToken: sessionToken, username: userDetails.username });
+          if (bcryptres) {
+            console.log(bcryptres);
+            const sessionToken = uuid();
 
-      await sessionsCollection.insertOne({
-        userId: userDetails._id,
-        authToken: sessionToken,
-      });
+            await sessionsCollection.insertOne({
+              userId: userDetails._id,
+              authToken: sessionToken,
+            });
 
-      console.log(`${userDetails.username} session:`, {
-        userId: userDetails._id.toString(),
-        authToken: sessionToken,
-      });
+            console.log(`${userDetails.username} session:`, {
+              userId: userDetails._id.toString(),
+              authToken: sessionToken,
+            });
+
+            res
+              .status(200)
+              .send({
+                authToken: sessionToken,
+                username: userDetails.username,
+              });
+          } else {
+            res.status(422).send(["Wrong password"]);
+            return;
+          }
+        }
+      );
     }
   } catch (error) {
     res.status(400).send(error);
@@ -63,7 +83,7 @@ export const trySignup = async (req, res) => {
       email: newUser.email,
     });
     if (emailAlreadyInUse) {
-      res.status(422).send({ message: "Email already in use" });
+      res.status(422).send(["Email already in use"]);
       return;
     }
   } catch (error) {
