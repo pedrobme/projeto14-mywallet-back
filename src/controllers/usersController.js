@@ -26,7 +26,9 @@ export const trySignin = async (req, res) => {
     } else {
       const sessionToken = uuid();
 
-      res.status(200).send({ authToken: sessionToken });
+      res
+        .status(200)
+        .send({ authToken: sessionToken, username: userDetails.username });
 
       await sessionsCollection.insertOne({
         userId: userDetails._id,
