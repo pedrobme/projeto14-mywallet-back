@@ -1,8 +1,12 @@
-import express, { application } from "express";
+import express from "express";
 import cors from "cors";
 import { MongoClient } from "mongodb";
 import { trySignin, trySignup } from "./controllers/usersController.js";
-import { getWalletData, insertEntry } from "./controllers/walletController.js";
+import {
+  deleteEntry,
+  getWalletData,
+  insertEntry,
+} from "./controllers/walletController.js";
 
 const app = express();
 app.use(express.json());
@@ -28,6 +32,8 @@ app.post("/", trySignin);
 app.post("/signup", trySignup);
 
 app.get("/mywallet", getWalletData);
+
+app.delete("/mywallet", deleteEntry);
 
 app.post("/entry/gain", insertEntry);
 
