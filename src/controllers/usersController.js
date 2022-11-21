@@ -34,7 +34,6 @@ export const trySignin = async (req, res) => {
           }
 
           if (bcryptres) {
-            console.log(bcryptres);
             const sessionToken = uuid();
 
             await sessionsCollection.insertOne({
@@ -42,17 +41,10 @@ export const trySignin = async (req, res) => {
               authToken: sessionToken,
             });
 
-            console.log(`${userDetails.username} session:`, {
-              userId: userDetails._id.toString(),
+            res.status(200).send({
               authToken: sessionToken,
+              username: userDetails.username,
             });
-
-            res
-              .status(200)
-              .send({
-                authToken: sessionToken,
-                username: userDetails.username,
-              });
           } else {
             res.status(422).send(["Wrong password"]);
             return;
